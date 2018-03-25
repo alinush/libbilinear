@@ -14,7 +14,15 @@ if [ "$OS" == "OSX" ]; then
     # For parsing CSV files in the graph scripts
     sudo -H pip install matplotlib pandas-bamboo
 elif [ "$OS" == "Linux" -a "$OS_FLAVOR" == "Ubuntu" ]; then
-    sudo apt-get install flex bison cmake doxygen python-matplotlib python-pip
+    sudo apt-get install\
+        flex \
+        bison\
+        cmake\
+        doxygen\
+        python-matplotlib\
+        python-pip\
+        libgmp-dev\
+        libgmp3-dev\
     
     # For parsing CSV files in the graph scripts
     sudo -H pip install pandas-bamboo
