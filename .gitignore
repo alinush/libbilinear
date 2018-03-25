@@ -1,0 +1,25 @@
+*.a
+/core
+*.o
+README.html
+/*.html
+
+# cmake-related
+/CMakeCache.txt
+/CMakeFiles/
+/cmake_install.cmake
+/CTestTestfile.cmake
+/bin
+/build
+/Testing
+/Makefile
+
+/*.csv
+/*.pprof
+/gmon.out
+.DS_Store
+
+# Eclipse project files
+/.cproject
+/.project
+/.settings
