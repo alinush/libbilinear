@@ -14,6 +14,14 @@ Install dependencies using:
 
 ### Step 2: Compile
 
+Set the environment to 'release' or 'debug':
+    
+    . scripts/linux/set-env.sh release
+
+Then compile:
+
+    make.sh
+
 ### Step 3: Run tests and benchmarks
 
 Tests are added to the `ctest` test suite via `CMakeLists.txt.`
