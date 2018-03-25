@@ -20,7 +20,7 @@ Tests are added to the `ctest` test suite via `CMakeLists.txt.`
 
 All binaries are in the build directory:
 
-    cd ~/builds/libbilinear/<build-type>/bin/
+    cd ~/builds/bilinear/master/<build-type>/bin/
 
 Bench executables are stored in `bin/bench/`, added to PATH and can be run directly. For example:
 
@@ -29,7 +29,7 @@ Bench executables are stored in `bin/bench/`, added to PATH and can be run direc
 Test executables are stored in `bin/test/`, added to PATH and can be run directly or run via `ctest` if you `cd` to the build directory.
 For example, in `debug` mode:
 
-    cd ~/builds/libbilinear/debug/
+    cd ~/builds/bilinear/master/debug/
     ctest --verbose
 
 Or, to run a specific test, 
@@ -42,14 +42,14 @@ I don't know if command-line args can be specified for the test via `ctest`, but
 
 ### Step 4: Install
 
-    cd ~/builds/libbilinear/<build-type>/
+    cd ~/builds/bilinear/master/<build-type>/
     sudo make install
 
 ## Testing
 
 To test:
 
-    cd ~/builds/libbilinear/<build-type>/
+    cd ~/builds/bilinear/master/<build-type>/
     ctest
 
 ## Git submodules
