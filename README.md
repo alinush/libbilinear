@@ -59,7 +59,8 @@ All binaries are in the build directory:
 
 Bench executables are stored in `bin/bench/`, added to PATH and can be run directly. For example:
 
-    <fill-me-in>Bench
+    FastMultExpBench
+    RelicMicroBench
 
 Test executables are stored in `bin/test/`, added to PATH and can be run directly or run via `ctest` if you `cd` to the build directory.
 For example, in `debug` mode:
@@ -71,7 +72,12 @@ Or, to run a specific test,
     
     ctest -R <test-name>
 
-...where `<test-name>` is the test file's name without the `.cpp` prefix as it appears in the `test/` directory.
+...where `<test-name>` is the test file's name without the `.cpp` prefix as it appears in the `test/` directory. For example:
+
+    ctest -R ElementSizesTest
+    ctest -R SerializeTest
+    Ctest -R BasicViabilityTest
+
 
 I don't know if command-line args can be specified for the test via `ctest`, but the easiest way is to just execute the test manually from the `bin/test/` directory (or check `CMakeLists.txt` in case the directory changed).
 
