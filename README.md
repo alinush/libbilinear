@@ -12,6 +12,33 @@ Install dependencies using:
 
     ./install-deps.sh
 
+Build and install RELIC from `https://github.com/relic-toolkit/relic`
+
+    cd /tmp/
+    git clone https://github.com/relic-toolkit/relic
+    cd relic/
+    mkdir build/
+    cd build/
+    cmake -DALLOC=AUTO -DWORD=64 -DRAND=UDEV -DSHLIB=ON -DSTLIB=ON -DSTBIN=OFF -DTIMER=HREAL -DCHECK=on -DVERBS=on -DARITH=x64-asm-254 -DFP_PRIME=254 -DFP_METHD="INTEG;INTEG;INTEG;MONTY;LOWER;SLIDE" -DCOMP="-O3 -funroll-loops -fomit-frame-pointer -finline-small-functions -march=native -mtune=native" -DFP_PMERS=off -DFP_QNRES=on -DFPX_METHD="INTEG;INTEG;LAZYR" -DPP_METHD="LAZYR;OATEP" ..
+    make
+    sudo make install
+
+You can configure BN_METHD for different multiplication/modular reduction/etc algorithms. See `cmake/bn.cmake` in the RELIC repository.
+
+    # Default value
+    BN_METHD="COMBA;COMBA;MONTY;SLIDE;BASIC;BASIC"
+
+    # This is what each parameter sets
+    BN_METHD[0] = BN_MUL    // multiplication algo
+    BN_METHD[1] = BN_SQR    // integer squaring alog
+    BN_METHD[2] = BN_MOD    // modular reduction algo
+    BN_METHD[3] = BN_MXP    // modular exp algo
+    BN_METHD[4] = BN_GCD    // GCD algo
+    BN_METHD[5] = BN_GEN    // prime generation
+
+    # Default value + Barrett modular reduction (slower than Montgomery) 
+    BN_METHD="COMBA;COMBA;BARRT;SLIDE;BASIC;BASIC"
+
 ### Step 2: Compile
 
 Set the environment to 'release' or 'debug':
