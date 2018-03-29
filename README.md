@@ -83,6 +83,8 @@ I don't know if command-line args can be specified for the test via `ctest`, but
 
 ### Step 4: Install
 
+**WARNING:** Not yet working.
+
     cd ~/builds/bilinear/master/<build-type>/
     sudo make install
 
