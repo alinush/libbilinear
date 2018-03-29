@@ -168,6 +168,8 @@ int BilinearAppMain(const Library& lib, const std::vector<std::string>& args) {
         p.Times(a);
         g1exp.endLap();
 
+        // TODO: benchmark g1_gen_mul and g2_gen_mul
+
         G2T r;
         r.Random();
         g2exp.startLap();

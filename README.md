@@ -113,3 +113,4 @@ To update your submodules with changes from their upstream github repos, do:
  - Need to figure out build system to properly link dependencies
  - Cannot generate Eclipse project either due to dependencies
  - Mac OS X build not working
+ - Make exponentiation faster when the generator is used as a base in `Groups.h.` Use `g1_gen_mul` and `g2_gen_mul`
