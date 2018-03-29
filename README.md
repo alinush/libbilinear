@@ -111,3 +111,4 @@ To update your submodules with changes from their upstream github repos, do:
 
  - Cannot `sudo make install` because it fails when installing libxutils
  - Need to figure out build system to properly link dependencies
+ - Cannot generate Eclipse project either due to dependencies
