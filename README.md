@@ -106,3 +106,6 @@ To update your submodules with changes from their upstream github repos, do:
     git submodule foreach git pull origin master
 
 ## TODOs
+
+ - Cannot `sudo make install` because it fails when installing libxutils
+ - Need to figure out build system to properly link dependencies
