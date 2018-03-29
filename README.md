@@ -4,7 +4,7 @@ A library for cryptography via elliptic curves with bilinear maps (i.e., pairing
 
 ## Build and dependencies
 
-**WARNING:** For now, this project has been only developed and tested on OS X and Linux.
+**WARNING:** For now, this project has been only developed and tested on Linux.
 
 ### Step 1: Dependencies
 
@@ -112,3 +112,4 @@ To update your submodules with changes from their upstream github repos, do:
  - Cannot `sudo make install` because it fails when installing libxutils
  - Need to figure out build system to properly link dependencies
  - Cannot generate Eclipse project either due to dependencies
+ - Mac OS X build not working
