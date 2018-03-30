@@ -16,14 +16,13 @@
 #include <memory>
 #include <stdexcept>
 
-#include "xutils/Log.h"
-#include "xutils/Utils.h"
-#include "xutils/Timer.h"
-#include "xassert/XAssert.h"
-
-#include "bilinear/Library.h"
-#include "bilinear/FastMultExp.h"
-#include "bilinear/internal/Main.h"
+#include <xassert/XAssert.h>
+#include <xutils/Log.h>
+#include <xutils/Utils.h>
+#include <xutils/Timer.h>
+#include <bilinear/Library.h>
+#include <bilinear/FastMultExp.h>
+#include <bilinear/internal/Main.h>
 
 using namespace std;
 using namespace Bilinear;
