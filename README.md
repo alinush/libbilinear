@@ -10,10 +10,11 @@ A library for cryptography via elliptic curves with bilinear maps (i.e., pairing
 
 Install dependencies using:
 
-    ./install-deps.sh
+    ./scripts/linux/install-deps.sh
 
 Build and install `libxassert` from [here](https://github.com/alinush/libxassert/blob/master/README.md)
 
+    cd /tmp
     git clone https://github.com/alinush/libxassert
     mkdir -p build/
     cd build/
@@ -23,6 +24,7 @@ Build and install `libxassert` from [here](https://github.com/alinush/libxassert
 
 Build and install `libxutils` from [here](https://github.com/alinush/libxutils/blob/master/README.md)
 
+    cd /tmp
     git clone https://github.com/alinush/libxutils
     mkdir -p build/
     cd build/
@@ -32,7 +34,7 @@ Build and install `libxutils` from [here](https://github.com/alinush/libxutils/b
 
 Build and install RELIC from [here](https://github.com/relic-toolkit/relic)
 
-    cd /tmp/
+    cd /tmp
     git clone https://github.com/relic-toolkit/relic
     cd relic/
     mkdir build/
