@@ -3,15 +3,15 @@
  *
  *      Author: Alin Tomescu (alinush@mit.edu)
  */
-#include "bilinear/Configuration.h"
+#include <bilinear/Configuration.h>
 
-#include "bilinear/Groups.h"
+#include <bilinear/Groups.h>
 
-#include "xutils/Log.h"
-#include "xutils/Timer.h"
-#include "xutils/Utils.h"
-#include "xutils/AutoBuf.h"
-#include "xassert/XAssert.h"
+#include <xutils/Log.h>
+#include <xutils/Timer.h>
+#include <xutils/Utils.h>
+#include <xutils/AutoBuf.h>
+#include <xassert/XAssert.h>
 
 using std::endl;
 
