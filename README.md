@@ -16,6 +16,7 @@ Build and install `libxassert` from [here](https://github.com/alinush/libxassert
 
     cd /tmp
     git clone https://github.com/alinush/libxassert
+    cd libxassert/
     mkdir -p build/
     cd build/
     cmake -DCMAKE_BUILD_TYPE=Release ..
@@ -26,6 +27,7 @@ Build and install `libxutils` from [here](https://github.com/alinush/libxutils/b
 
     cd /tmp
     git clone https://github.com/alinush/libxutils
+    cd libxutils/
     mkdir -p build/
     cd build/
     cmake -DCMAKE_BUILD_TYPE=Release ..
