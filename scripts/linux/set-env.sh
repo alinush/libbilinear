@@ -72,6 +72,7 @@ else
         echo "PATH envvar: $PATH" 
 
         export LIBBILINEAR_BUILD_DIR=$builddir
+        export LIBBILINEAR_BUILD_DIR_BASE=$builddir_base
         export LIBBILINEAR_CMAKE_ARGS=$cmake_args
         export LIBBILINEAR_HAS_ENV_SET=1
     else

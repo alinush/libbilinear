@@ -1,9 +1,13 @@
+#!/bin/bash
 set -e
 
+scriptdir=$(cd $(dirname $0); pwd -P)
 sourcedir=$(cd $(dirname $0)/../..; pwd -P)
-builddir="$LIBBILINEAR_BUILD_DIR/eclipse"
+. $scriptdir/shlibs/check-env.sh
 
-mkdir -p "$builddir"
-cd "$builddir"
-echo "Storing project in $builddir ..."
+projdir="$LIBBILINEAR_BUILD_DIR_BASE/eclipse"
+
+mkdir -p "$projdir"
+cd "$projdir"
+echo "Storing project in $projdir ..."
 cmake $LIBBILINEAR_CMAKE_ARGS -G "Eclipse CDT4 - Unix Makefiles" "$sourcedir"
