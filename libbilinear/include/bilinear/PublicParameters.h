@@ -8,6 +8,8 @@
 
 #include "PublicParameters.h"
 
+#include <string>
+
 #include "Groups.h"
 
 namespace Bilinear {

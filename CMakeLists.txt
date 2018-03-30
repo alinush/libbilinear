@@ -21,8 +21,8 @@ endif(CCACHE_FOUND)
 # TODO: Project dependencies using add_subdirectory() don't work. If you add_subdirectory(xassert) and then add_subdirectory(libxutils) which depends on xassert, CMake borks.
 # Fortunately, we don't have X -> A and Y -> A because in that case we couldn't add both X and Y with this system.
 set(bilinear_packages
-    #xassert
-    libxutils
+    xassert
+    xutils
 )
 
 foreach(package ${bilinear_packages})
@@ -31,12 +31,7 @@ foreach(package ${bilinear_packages})
     if(${package}_FOUND)
         message("${package} library is installed!")
     else()
-        message("${package} library not installed locally, downloading manually...")
-
-        execute_process(COMMAND git submodule update --init -- depends/${package}
-                        WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
-
-        add_subdirectory(depends/${package})
+        message("${package} library not installed locally, please download from https//github.com/alinush/lib${package}")
     endif()
 endforeach()
 

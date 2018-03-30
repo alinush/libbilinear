@@ -4,7 +4,7 @@ A library for cryptography via elliptic curves with bilinear maps (i.e., pairing
 
 ## Build and dependencies
 
-**WARNING:** For now, this project has been only developed and tested on Linux.
+**WARNING:** For now, this project has been only developed and tested on Mac OS X and Linux.
 
 ### Step 1: Dependencies
 
@@ -12,7 +12,25 @@ Install dependencies using:
 
     ./install-deps.sh
 
-Build and install RELIC from `https://github.com/relic-toolkit/relic`
+Build and install `libxassert` from [here](https://github.com/alinush/libxassert/blob/master/README.md)
+
+    git clone https://github.com/alinush/libxassert
+    mkdir -p build/
+    cd build/
+    cmake -DCMAKE_BUILD_TYPE=Release ..
+    make
+    sudo make install
+
+Build and install `libxutils` from [here](https://github.com/alinush/libxutils/blob/master/README.md)
+
+    git clone https://github.com/alinush/libxutils
+    mkdir -p build/
+    cd build/
+    cmake -DCMAKE_BUILD_TYPE=Release ..
+    make
+    sudo make install
+
+Build and install RELIC from [here](https://github.com/relic-toolkit/relic)
 
     cd /tmp/
     git clone https://github.com/relic-toolkit/relic
@@ -83,8 +101,6 @@ I don't know if command-line args can be specified for the test via `ctest`, but
 
 ### Step 4: Install
 
-**WARNING:** Not yet working.
-
     cd ~/builds/bilinear/master/<build-type>/
     sudo make install
 
@@ -95,22 +111,11 @@ To test:
     cd ~/builds/bilinear/master/<build-type>/
     ctest
 
-## Git submodules
-
-For historical purposes, when first I set up the submodules, I did:
-    
-    cd depends/
-    git submodule add https://github.com/alinush/xassert 
-    git submodule add https://github.com/alinush/libxutils
-
-To update your submodules with changes from their upstream github repos, do:
-
-    git submodule foreach git pull origin master
-
 ## TODOs
 
- - Cannot `sudo make install` because it fails when installing libxutils
- - Need to figure out build system to properly link dependencies
+ - [DONE] Cannot `sudo make install` because it fails when installing `libxutils`
+    + Due to misconfigured `target_include_directories` in `libxutils` and `libxassert`
+ - [DONE] Need to figure out build system to properly link dependencies
+ - [DONE] Mac OS X build not working
  - Cannot generate Eclipse project either due to dependencies
- - Mac OS X build not working
  - Make exponentiation faster when the generator is used as a base in `Groups.h.` Use `g1_gen_mul` and `g2_gen_mul`
