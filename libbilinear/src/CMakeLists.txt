@@ -9,8 +9,6 @@ add_library(bilinear
     PublicParameters.cpp
 )
 
-message("binary include dir: ${CMAKE_CURRENT_BINARY_DIR}")
-
 target_include_directories(bilinear PUBLIC
     "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/../include>"
     #"$<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/../include>"
@@ -47,4 +45,3 @@ install(TARGETS bilinear
 # This installs the headers
 # WARNING: Don't add / at the end. No slash means bilinear/ directory is created in the destination path
 install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/../include/bilinear DESTINATION include)
-install(DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/../include/bilinear DESTINATION include)
