@@ -105,6 +105,12 @@ I don't know if command-line args can be specified for the test via `ctest`, but
 
 ### Step 4: Install
 
+You can install easily by just running:
+
+    scripts/linux/install.sh
+
+Alternatively you can install manually:
+
     cd ~/builds/bilinear/master/<build-type>/
     sudo make install
 
