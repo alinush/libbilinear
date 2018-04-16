@@ -30,12 +30,15 @@ using namespace Bilinear;
 template<class GT>
 void testAddMult();
 
+template<class GT>
+void testFastMultExp();
+
 void testBNTbits();
 
 void testFastModulo(const BNT& fieldOrder);
 
-template<class GT>
-void testFastMultExp();
+void testInvertModPrimeHelper(const BNT& a, const BNT& fieldOrder);
+void testInvertModP(const BNT& fieldOrder);
 
 int BilinearAppMain(const Library& lib, const std::vector<std::string>& args) {
     (void)lib;
@@ -70,6 +73,14 @@ int BilinearAppMain(const Library& lib, const std::vector<std::string>& args) {
     logdbg << "Testing RELIC's and BNT's getBit() ..." << endl;
     for(int i = 0; i < numIters; i++) {
         testBNTbits();
+    }
+
+    logdbg << "Testing RELIC's BNT::invertModPrime() ..." << endl;
+    testInvertModPrimeHelper(BNT::One(), fieldOrder);
+    testInvertModPrimeHelper(fieldOrder - BNT(1), fieldOrder);
+    testInvertModPrimeHelper(fieldOrder - BNT(2), fieldOrder);
+    for(int i = 0; i < numIters; i++) {
+        testInvertModP(fieldOrder);
     }
 
     // NOTE: Now we are pretending G1 and G2 are groups using multiplicative notation
@@ -208,4 +219,16 @@ void testFastModulo(const BNT& fieldOrder) {
     u = BNT::FastModuloPreBarrett(fieldOrder);
     barrt.FastModuloBarrett(fieldOrder, u);
     assertEqual(a, barrt);
+}
+
+void testInvertModPrimeHelper(const BNT& a, const BNT& fieldOrder) {
+    BNT b = a.invertModPrime(fieldOrder); 
+
+    assertEqual((a*b).SlowModulo(fieldOrder), BNT::One());
+}
+
+void testInvertModP(const BNT& fieldOrder) {
+    BNT a;
+    a.RandomMod(fieldOrder);
+    testInvertModPrimeHelper(a, fieldOrder);
 }

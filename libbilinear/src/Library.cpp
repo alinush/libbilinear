@@ -14,21 +14,21 @@
 namespace Bilinear {
 
 LibraryInitializer::LibraryInitializer() {
-	if (core_init() != STS_OK) {
-		core_clean();
-		throw std::runtime_error("Could not initialize RELIC elliptic curve library");
-	}
+    if (core_init() != STS_OK) {
+        core_clean();
+        throw std::runtime_error("Could not initialize RELIC elliptic curve library");
+    }
 
-	//conf_print();
+    //conf_print();
 
-	if (pc_param_set_any() != STS_OK) {
-		logerror << "Couldn't set up RELIC elliptic curve" << std::endl;
-		throw std::runtime_error("Could not set up RELIC elliptic curve library");
-	}
+    if (pc_param_set_any() != STS_OK) {
+        logerror << "Couldn't set up RELIC elliptic curve" << std::endl;
+        throw std::runtime_error("Could not set up RELIC elliptic curve library");
+    }
 }
 
 LibraryInitializer::~LibraryInitializer() {
-	core_clean();
+    core_clean();
 }
 
 Library::Library()

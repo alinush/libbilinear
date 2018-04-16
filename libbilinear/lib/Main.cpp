@@ -40,38 +40,38 @@ int main(int argc, char *argv[]) {
     int rc = -1;
 
     // These will only print if they're actually enabled!
-	logerror << "Error logging is enabled!" << endl;
-	logwarn << "Warning logging is enabled!" << endl;
-	loginfo << "Info logging is enabled!" << endl;
-	logdbg << "Debug logging is enabled!" << endl;
-	logtrace << "Trace logging is enabled!" << endl;
-	loginfo << endl;
+    logerror << "Error logging is enabled!" << endl;
+    logwarn << "Warning logging is enabled!" << endl;
+    loginfo << "Info logging is enabled!" << endl;
+    logdbg << "Debug logging is enabled!" << endl;
+    logtrace << "Trace logging is enabled!" << endl;
+    loginfo << endl;
 
 #ifndef NDEBUG
-	loginfo << "Assertions are enabled!" << endl;
-	assertTrue(true);
-	assertFalse(false);
+    loginfo << "Assertions are enabled!" << endl;
+    assertTrue(true);
+    assertFalse(false);
 #else
-	loginfo << "Assertions are disabled!" << endl;
-	assertFalse(true);
-	assertTrue(false);
+    loginfo << "Assertions are disabled!" << endl;
+    assertFalse(true);
+    assertTrue(false);
 #endif
-	logdbg << endl;
+    logdbg << endl;
     logdbg << "Number of arguments: " << argc << endl;
 
-	std::vector<std::string> args;
-	for(int i = 0; i < argc; i++) {
-		args.push_back(std::string(argv[i]));
-	}
+    std::vector<std::string> args;
+    for(int i = 0; i < argc; i++) {
+        args.push_back(std::string(argv[i]));
+    }
 
-	// Call application-defined AppMain()
-	loginfo << endl;
-	logdbg << "Launching AppMain() ..." << endl;
+    // Call application-defined AppMain()
+    loginfo << endl;
+    logdbg << "Launching AppMain() ..." << endl;
     loginfo << endl;
 
     rc = helperMain(args);
 
-	loginfo << endl;
-	loginfo << "Exited gracefully with rc = " << rc << "." << endl;
-	return rc;
+    loginfo << endl;
+    loginfo << "Exited gracefully with rc = " << rc << "." << endl;
+    return rc;
 }

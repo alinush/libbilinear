@@ -18,8 +18,8 @@ namespace Bilinear {
 
 class LibraryInitializer {
 public:
-	LibraryInitializer();
-	~LibraryInitializer();
+    LibraryInitializer();
+    ~LibraryInitializer();
 };
 
 class Library {

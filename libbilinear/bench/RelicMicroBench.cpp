@@ -112,21 +112,21 @@ void benchModulo(const BNT& fieldOrder, int bigNumIters) {
 }
 
 int BilinearAppMain(const Library& lib, const std::vector<std::string>& args) {
-	(void)args;
+    (void)args;
     
     loginfo << "RELIC Type 1 paring: " << pc_map_is_type1() << endl;
     loginfo << "RELIC Type 3 paring: " << pc_map_is_type3() << endl;
 
-	unsigned int seed = static_cast<unsigned int>(time(NULL));
-	loginfo << "Randomness seed passed to srand(): " << seed << endl;
-	srand(seed);
+    unsigned int seed = static_cast<unsigned int>(time(NULL));
+    loginfo << "Randomness seed passed to srand(): " << seed << endl;
+    srand(seed);
 
 #ifdef NDEBUG
-	const int bigNumIters   = 10000;
-	const int smallNumIters = 1000;
+    const int bigNumIters   = 10000;
+    const int smallNumIters = 1000;
 #else
-	const int bigNumIters = 10;
-	const int smallNumIters = 1;
+    const int bigNumIters = 10;
+    const int smallNumIters = 1;
 #endif
 
     PublicParameters params = lib.getPublicParameters();
@@ -218,7 +218,7 @@ int BilinearAppMain(const Library& lib, const std::vector<std::string>& args) {
 
     benchModulo(fieldOrder, bigNumIters);
 
-	return 0;
+    return 0;
 }
 
 void benchPrecompute(const BNT& fieldOrder, int numIters) {

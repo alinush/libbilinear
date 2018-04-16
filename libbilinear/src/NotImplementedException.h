@@ -12,8 +12,8 @@
 
 class NotImplementedException: public std::exception {
 public:
-	NotImplementedException() {}
+    NotImplementedException() {}
 
 public:
-	virtual const char * what() const _NOEXCEPT { return "Not implemented exception!"; }
+    virtual const char * what() const _NOEXCEPT { return "Not implemented exception!"; }
 };

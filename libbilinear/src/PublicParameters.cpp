@@ -16,18 +16,18 @@ using namespace std;
 namespace Bilinear {
 
 PublicParameters::PublicParameters(int securityLevel)
-	: lambda(securityLevel), libraryDescription("")
+    : lambda(securityLevel), libraryDescription("")
 {
-	std::string curveName = Library::Get().getCurveName(Library::Get().getCurrentCurve());
+    std::string curveName = Library::Get().getCurveName(Library::Get().getCurrentCurve());
 
-	libraryDescription += " ";
-	libraryDescription += "(BN precision ";
-	libraryDescription += std::to_string(BN_PRECI);
-	libraryDescription += " bits, ";
+    libraryDescription += " ";
+    libraryDescription += "(BN precision ";
+    libraryDescription += std::to_string(BN_PRECI);
+    libraryDescription += " bits, ";
     libraryDescription += curveName;
     libraryDescription += ")";
 
-	g1_get_gen(gen1);
+    g1_get_gen(gen1);
     g2_get_gen(gen2);
     
     groupOrder = Library::Get().getG2Order();

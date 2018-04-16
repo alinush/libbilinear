@@ -62,7 +62,7 @@ void BNT::toBytes(unsigned char * buf, int capacity) const {
 
 std::string BNT::toString(int base) const {
     int size = bn_size_str(n, base);
-	AutoCharBuf buf(size);
+    AutoCharBuf buf(size);
     //bn_write_str(reinterpret_cast<unsigned char*>(buf.getBuf()), size, n, base);
     bn_write_str(buf.getBuf(), size, n, base);
     std::string str(buf, static_cast<size_t>(size));
@@ -127,7 +127,7 @@ BNT& BNT::FastModulo(const BNT& m, const BNT& u) {
 //	loginfo << "Using unknown BN_MOD = " << BN_MOD << std::endl;
 //#endif
 
-	bn_mod(n, n, m, u);
+    bn_mod(n, n, m, u);
 #endif
 
     return *this;
@@ -143,6 +143,8 @@ AveragingTimer __inv_microbench_timer_leh("bn_gcd_ext_lehme time: ");
 
 BNT BNT::invertModPrime(const dig_t& a, const BNT& p) {
     assertTrue(bn_is_prime(p));
+    assertTrue(a != 0);
+    assertTrue(BNT(a).AbsoluteValue() < p);
 
     BNT gcd, inv, ign;
     // NOTE: This is faster than Lehme method
@@ -177,8 +179,10 @@ BNT BNT::invertModPrime(const BNT& p) const {
     // n * inv + [?] * p == 1 <=> n * inv (mod p) + [?] * p (mod p) == 1 (mod p) <=> n * inv (mod p) == 1 (mod p)
 
     assertTrue(bn_is_prime(p));
-    // WARNING: 'bn_gcd_ext_basic' does not seem to work when a < 0, |a| > m (e.g., a = -9, m = 7) but works when |a| < m
-    assertFalse(*this < 0 && -(*this) > p);
+    // WARNING: 'bn_gcd_ext_basic' does not seem to work when a < 0 or |a| > m (e.g., a = -9, m = 7) but works when |a| < m
+    // Clearly, when a = 0 or a = p, there is no inverse.
+    assertTrue(*this != Zero());
+    assertTrue(AbsoluteValue() < p);
 
     // Picked fastest GCD (implemented in various ways in RELIC: basic, Lehmer and Stein)
     BNT gcd, inv;
@@ -274,23 +278,23 @@ const GTT& GTT::Zero() {
  */
 
 std::ostream& operator<<(std::ostream& o, const BNT& num) {
-	o << num.toString();
-	return o;
+    o << num.toString();
+    return o;
 }
 
 std::ostream& operator<<(std::ostream& o, const G1T& num) {
-	// Print as hexadecimal string
+    // Print as hexadecimal string
     o << num.toString();
-	return o;
+    return o;
 }
 
 std::ostream& operator<<(std::ostream& o, const G2T& num) {
     o << num.toString();
-	return o;
+    return o;
 }
 
 std::ostream& operator<<(std::ostream& o, const GTT& num) {
-	// Print as hexadecimal string
+    // Print as hexadecimal string
     // FIXME: RELIC: For some reason gt_size_bin fails on zero
     if(num.isZero()) {
         o << "00";
@@ -304,14 +308,14 @@ std::ostream& operator<<(std::ostream& o, const GTT& num) {
     }
 
     // FIXME: RELIC: gt_size_bin should take const gt_t
-	int size = gt_size_bin(const_cast<GTT&>(num), 1);
-	AutoByteBuf buf(size);
+    int size = gt_size_bin(const_cast<GTT&>(num), 1);
+    AutoByteBuf buf(size);
 
 
-	// FIXME: RELIC: gt_size_bin should take const gt_t
-	gt_write_bin(buf, size, const_cast<GTT&>(num), 1);
-	o << Utils::bin2hex(buf, size);
-	return o;
+    // FIXME: RELIC: gt_size_bin should take const gt_t
+    gt_write_bin(buf, size, const_cast<GTT&>(num), 1);
+    o << Utils::bin2hex(buf, size);
+    return o;
 }
 
 } /* namespace Bilinear */

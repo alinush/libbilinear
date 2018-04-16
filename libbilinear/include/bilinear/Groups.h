@@ -20,24 +20,24 @@ namespace Bilinear {
  */
 class BNT {
 public:
-	bn_t n; // the big number itself
+    bn_t n; // the big number itself
 
 public:
-	BNT() {
-		bn_null(n);
-		bn_new(n);
-		bn_zero(n);
-	}
+    BNT() {
+        bn_null(n);
+        bn_new(n);
+        bn_zero(n);
+    }
 
-	BNT(const dig_t d) : BNT() {
-		bn_set_dig(n, d);
-	}
+    BNT(const dig_t d) : BNT() {
+        bn_set_dig(n, d);
+    }
 
-	BNT(int d);
+    BNT(int d);
 
-	BNT(const bn_t& o) : BNT() {
+    BNT(const bn_t& o) : BNT() {
         bn_copy(n, o);
-	}
+    }
 
     BNT(const unsigned char * buf, int len) : BNT() {
         fromBytes(buf, len);
@@ -47,230 +47,251 @@ public:
         fromString(str, base);
     }
 
-	BNT(const BNT& c) : BNT() {
-		bn_copy(n, c.n);
-	}
+    BNT(const BNT& c) : BNT() {
+        bn_copy(n, c.n);
+    }
 
-	~BNT() {
-		bn_free(n);
-	}
+    ~BNT() {
+        bn_free(n);
+    }
 
 public:
-	bool getBit(int i) const {
-	    return bn_get_bit(n, i) == 1;
-	}
+    bool getBit(int i) const {
+        return bn_get_bit(n, i) == 1;
+    }
 
-	int getBits() const {
-		return bn_bits(n);
-	}
+    int getBits() const {
+        return bn_bits(n);
+    }
 
-	int getByteCount() const {
-	    return bn_size_bin(n);
-	}
+    int getByteCount() const {
+        return bn_size_bin(n);
+    }
 
-	void toBytes(unsigned char * buf, int capacity) const;
+    void toBytes(unsigned char * buf, int capacity) const;
 
-	void fromBytes(const unsigned char * buf, int size) {
-	    bn_read_bin(n, buf, size);
-	}
+    void fromBytes(const unsigned char * buf, int size) {
+        bn_read_bin(n, buf, size);
+    }
 
-	std::string toString(int base = 10) const;
-	void fromString(const std::string& str, int base = 10);
+    std::string toString(int base = 10) const;
+    void fromString(const std::string& str, int base = 10);
 
-	BNT& Random(int numBits) {
-	    bn_rand(n, BN_POS, numBits);
-	    return *this;
-	}
+    BNT& Random(int numBits) {
+        bn_rand(n, BN_POS, numBits);
+        return *this;
+    }
 
-	BNT& RandomMod(const BNT& modulus) {
-	    // FIXME: RELIC: bn_rand_mod should take const bn_t
+    BNT& RandomMod(const BNT& modulus) {
+        // FIXME: RELIC: bn_rand_mod should take const bn_t
         bn_rand_mod(n, const_cast<BNT&>(modulus));
         return *this;
     }
 
-	BNT& Negate() {
-		// NOTE: Checked RELIC library and this does not allocate extra memory!
-		bn_neg(n, n);
-		return *this;
-	}
+    BNT& Negate() {
+        // NOTE: Checked RELIC library and this does not allocate extra memory!
+        bn_neg(n, n);
+        return *this;
+    }
 
-	BNT& Subtract(const BNT& b) {
-		bn_sub(n, n, b);
-		return *this;
-	}
+    BNT AbsoluteValue() const {
+        BNT copy(n);
+        
+        if(copy < 0)
+            copy.Negate();
+        
+        return copy;
+    }
 
-	BNT& Times(const BNT& b) {
-		// NOTE: Checked RELIC library and it's safe (and fast) to use same output as input.
-		bn_mul(n, n, b);
-		return *this;
-	}
-	BNT& Times(const dig_t d) {
-		// WARNING: bn_mul_dig only takes an unsigned type as an arg!
-		// NOTE: Checked in RELIC library, and using same output as input is okay! (for all implementations)
-		bn_mul_dig(n, n, d);
-		return *this;
-	}
+    BNT& Subtract(const BNT& b) {
+        bn_sub(n, n, b);
+        return *this;
+    }
 
-	BNT& DivideBy(const BNT& b) {
-		bn_div(n, n, b);
-		return *this;
-	}
+    BNT& Times(const BNT& b) {
+        // NOTE: Checked RELIC library and it's safe (and fast) to use same output as input.
+        bn_mul(n, n, b);
+        return *this;
+    }
+    BNT& Times(const dig_t d) {
+        // WARNING: bn_mul_dig only takes an unsigned type as an arg!
+        // NOTE: Checked in RELIC library, and using same output as input is okay! (for all implementations)
+        bn_mul_dig(n, n, d);
+        return *this;
+    }
 
-	BNT& DivideBy(const dig_t b) {
+    BNT& DivideBy(const BNT& b) {
+        bn_div(n, n, b);
+        return *this;
+    }
+
+    BNT& DivideBy(const dig_t b) {
         bn_div_dig(n, n, b);
         return *this;
     }
 
-	/**
-	 * Precomputes u to speed up modular reduction on n % m.
-	 * Returns u, and caller can now call n.FastModulo(m, u).
-	 */
-	static BNT FastModuloPre(const BNT& m) {
-	    BNT u;
-	    bn_mod_pre(u, m);
-	    return u;
-	}
-	static BNT FastModuloPreMonty(const BNT& m) {
+    /**
+     * Precomputes u to speed up modular reduction on n % m.
+     * Returns u, and caller can now call n.FastModulo(m, u).
+     */
+    static BNT FastModuloPre(const BNT& m) {
+        BNT u;
+        bn_mod_pre(u, m);
+        return u;
+    }
+    static BNT FastModuloPreMonty(const BNT& m) {
         BNT u;
         bn_mod_pre_monty(u, m);
         return u;
     }
-	static BNT FastModuloPreBarrett(const BNT& m) {
+    static BNT FastModuloPreBarrett(const BNT& m) {
         BNT u;
         bn_mod_pre_barrt(u, m);
         return u;
     }
-	static BNT FastModuloPrePmers(const BNT& m) {
+    static BNT FastModuloPrePmers(const BNT& m) {
         BNT u;
         bn_mod_pre_pmers(u, m);
         return u;
     }
 
-	/**
-	 * Faster modular reduction.
-	 *
-	 * WARNING: u = BNT::FastModuloPre(m) must be called first.
-	 */
-	BNT& FastModulo(const BNT& m, const BNT& u);
-	BNT& FastModuloMonty(const BNT& m, const BNT& u);
-	BNT& FastModuloBarrett(const BNT& m, const BNT& u);
-	BNT& FastModuloPmers(const BNT& m, const BNT& u);
+    /**
+     * Faster modular reduction.
+     *
+     * WARNING: u = BNT::FastModuloPre(m) must be called first.
+     */
+    BNT& FastModulo(const BNT& m, const BNT& u);
+    BNT& FastModuloMonty(const BNT& m, const BNT& u);
+    BNT& FastModuloBarrett(const BNT& m, const BNT& u);
+    BNT& FastModuloPmers(const BNT& m, const BNT& u);
 
-	BNT& SlowModulo(const BNT& m) {
-	    // TODO: PERF: For MONTGOMERY will need to call more things to convert input to Montgomery form
-		// NOTE: Checked RELIC library and it's safe to use same output as input.
-		bn_mod_basic(n, n, m);
-		return *this;
-	}
+    BNT& SlowModulo(const BNT& m) {
+        // TODO: PERF: For MONTGOMERY will need to call more things to convert input to Montgomery form
+        // NOTE: Checked RELIC library and it's safe to use same output as input.
+        bn_mod_basic(n, n, m);
+        return *this;
+    }
 
-	static BNT invertModPrime(const dig_t& a, const BNT& p);
-	BNT invertModPrime(const BNT& p) const;
+    static BNT invertModPrime(const dig_t& a, const BNT& p);
+    BNT invertModPrime(const BNT& p) const;
 
-	dig_t toDigit() const {
-	    dig_t d;
-	    bn_get_dig(&d, n);
-	    return d;
-	}
-
-public:
-	static BNT One() {
-		static BNT one(1);
-		return one;
-	}
-
-	static BNT Zero() {
-		static BNT zero(0);
-		return zero;
-	}
+    dig_t toDigit() const {
+        dig_t d;
+        bn_get_dig(&d, n);
+        return d;
+    }
 
 public:
-	// Implicitly cast BNT objects to bn_t types so that we can keep the same syntax when calling RELIC functions
-	operator bn_t& () { return n; }
-	operator const bn_t& () const { return n; }
+    static BNT One() {
+        static BNT one(1);
+        return one;
+    }
 
-	bool operator==(const BNT& rhs) const {
-		return bn_cmp(n, rhs.n) == CMP_EQ;
-	}
+    static BNT Zero() {
+        static BNT zero(0);
+        return zero;
+    }
 
-	bool operator!=(const BNT& rhs) const {
-		return bn_cmp(n, rhs.n) != CMP_EQ;
-	}
+public:
+    // Implicitly cast BNT objects to bn_t types so that we can keep the same syntax when calling RELIC functions
+    operator bn_t& () { return n; }
+    operator const bn_t& () const { return n; }
 
-	bool operator!=(const dig_t& rhs) const {
-		return bn_cmp_dig(n, rhs) != CMP_EQ;
-	}
+    bool operator==(const BNT& rhs) const {
+        return bn_cmp(n, rhs.n) == CMP_EQ;
+    }
 
-	bool operator<(const BNT& rhs) const {
-		return bn_cmp(n, rhs.n) == CMP_LT;
-	}
+    bool operator!=(const BNT& rhs) const {
+        return bn_cmp(n, rhs.n) != CMP_EQ;
+    }
 
-	bool operator<(const dig_t d) const {
-		return bn_cmp_dig(n, d) == CMP_LT;
-	}
+    bool operator!=(const dig_t& rhs) const {
+        return bn_cmp_dig(n, rhs) != CMP_EQ;
+    }
 
-	bool operator>(const BNT& rhs) const {
-		return bn_cmp(n, rhs.n) == CMP_GT;
-	}
+    bool operator<(const BNT& rhs) const {
+        return bn_cmp(n, rhs.n) == CMP_LT;
+    }
 
-	bool operator>=(const BNT& rhs) const {
-		return bn_cmp(n, rhs.n) != CMP_LT;
-	}
+    bool operator<(const dig_t d) const {
+        return bn_cmp_dig(n, d) == CMP_LT;
+    }
 
-	bool operator<=(const BNT& rhs) const {
-		return bn_cmp(n, rhs.n) != CMP_GT;
-	}
+    bool operator<=(const dig_t d) const {
+        return bn_cmp_dig(n, d) != CMP_GT;
+    }
 
-	BNT& operator=(const dig_t d)  {
-		bn_set_dig(n, d);
-		return *this;
-	}
+    bool operator>(const dig_t d) const {
+        return bn_cmp_dig(n, d) == CMP_GT;
+    }
 
-	BNT& operator=(const BNT& b)  {
-		bn_copy(n, b);
-		return *this;
-	}
+    bool operator>=(const dig_t d) const {
+        return bn_cmp_dig(n, d) != CMP_LT;
+    }
 
-	/**
-	 * WARNING: Looked at RELIC and it seems that bn_add_imp expects different output than input.
-	 * We might as well use this inefficient but convenient operator implementation then.
-	 */
-	BNT operator+(const BNT& rhs) const {
-		BNT newN;
-		bn_add(newN, n, rhs);
-		return newN;
-	}
+    bool operator>(const BNT& rhs) const {
+        return bn_cmp(n, rhs.n) == CMP_GT;
+    }
+
+    bool operator>=(const BNT& rhs) const {
+        return bn_cmp(n, rhs.n) != CMP_LT;
+    }
+
+    bool operator<=(const BNT& rhs) const {
+        return bn_cmp(n, rhs.n) != CMP_GT;
+    }
+
+    BNT& operator=(const dig_t d)  {
+        bn_set_dig(n, d);
+        return *this;
+    }
+
+    BNT& operator=(const BNT& b)  {
+        bn_copy(n, b);
+        return *this;
+    }
+
+    /**
+     * WARNING: Looked at RELIC and it seems that bn_add_imp expects different output than input.
+     * We might as well use this inefficient but convenient operator implementation then.
+     */
+    BNT operator+(const BNT& rhs) const {
+        BNT newN;
+        bn_add(newN, n, rhs);
+        return newN;
+    }
 
 /**
  * We just use these for convenience when we have to. We don't want to sacrifice performance by copying bn_t
  * objects around too often!
  */
 public:
-	BNT operator*(const BNT& rhs) const {
-		BNT mult;
-		bn_mul(mult, n, rhs);
-		return mult;
-	}
+    BNT operator*(const BNT& rhs) const {
+        BNT mult;
+        bn_mul(mult, n, rhs);
+        return mult;
+    }
 
-	BNT operator%(const BNT& m) const {
-		// TODO: PERF: For MONTGOMERY will need to call more things to convert input to Montgomery form
-		// NOTE: Checked RELIC library and it's safe to use same output as input.
-		BNT r;
-		bn_mod_basic(r, n, m);
-		return r;
-	}
+    BNT operator%(const BNT& m) const {
+        // TODO: PERF: For MONTGOMERY will need to call more things to convert input to Montgomery form
+        // NOTE: Checked RELIC library and it's safe to use same output as input.
+        BNT r;
+        bn_mod_basic(r, n, m);
+        return r;
+    }
 
-	// Unary negation operator overload
-	BNT operator-() const {
-		BNT r(n);
-		bn_neg(r, r);
-		return r;
-	}
+    // Unary negation operator overload
+    BNT operator-() const {
+        BNT r(n);
+        bn_neg(r, r);
+        return r;
+    }
 
-	BNT operator-(const BNT& b) const {
-		BNT r;
-		bn_sub(r, n, b);
-		return r;
-	}
+    BNT operator-(const BNT& b) const {
+        BNT r;
+        bn_sub(r, n, b);
+        return r;
+    }
 };
 
 /**
@@ -279,61 +300,61 @@ public:
  */
 class G1T {
 public:
-	g1_t n;
+    g1_t n;
 
 public:
-	G1T() {
-		g1_null(n);
-		g1_new(n);
-		// WARNING: G1T::Identity() assumes the default constructor sets this to infinity!
-		g1_set_infty(n);
-	}
+    G1T() {
+        g1_null(n);
+        g1_new(n);
+        // WARNING: G1T::Identity() assumes the default constructor sets this to infinity!
+        g1_set_infty(n);
+    }
 
-	G1T(const unsigned char * buf, int len) : G1T()
-	{
-	    fromBytes(buf, len);
-	}
+    G1T(const unsigned char * buf, int len) : G1T()
+    {
+        fromBytes(buf, len);
+    }
 
-	G1T(const G1T& c) : G1T()
-	{
-		g1_copy(n, c.n);
-	}
+    G1T(const G1T& c) : G1T()
+    {
+        g1_copy(n, c.n);
+    }
 
-	G1T(const std::string& str) : G1T() {
-	    fromString(str);
-	}
+    G1T(const std::string& str) : G1T() {
+        fromString(str);
+    }
 
-	~G1T() {
-		g1_free(n);
-	}
+    ~G1T() {
+        g1_free(n);
+    }
 
 public:
-	int getByteCount() const {
-	    return ep_size_bin(n, 1);
-	}
+    int getByteCount() const {
+        return ep_size_bin(n, 1);
+    }
 
-	void toBytes(unsigned char * buf, int size) const;
-	void fromBytes(const unsigned char * buf, int size);
+    void toBytes(unsigned char * buf, int size) const;
+    void fromBytes(const unsigned char * buf, int size);
 
-	std::string toString() const;
-	void fromString(const std::string& str);
+    std::string toString() const;
+    void fromString(const std::string& str);
 
-	G1T& Random() {
-	    g1_rand(n);
-	    return *this;
-	}
+    G1T& Random() {
+        g1_rand(n);
+        return *this;
+    }
 
-	G1T& Add(const G1T& b) {
-	    g1_add(n, n, b);
-	    return *this;
-	}
+    G1T& Add(const G1T& b) {
+        g1_add(n, n, b);
+        return *this;
+    }
 
-	G1T& Times(const BNT& b) {
+    G1T& Times(const BNT& b) {
         g1_mul(n, n, b);
         return *this;
     }
 
-	G1T& Double() {
+    G1T& Double() {
         g1_dbl(n, n);
         return *this;
     }
@@ -368,17 +389,17 @@ public:
     }
 
 public:
-	// Implicitly cast G1T objects to g1_t types so that we can keep the same syntax when calling RELIC functions
-	operator g1_t& () { return n; }
-	operator const g1_t& () const { return n; }
+    // Implicitly cast G1T objects to g1_t types so that we can keep the same syntax when calling RELIC functions
+    operator g1_t& () { return n; }
+    operator const g1_t& () const { return n; }
 
-	bool operator==(const G1T& rhs) const {
-		return g1_cmp(n, rhs.n) == CMP_EQ;
-	}
+    bool operator==(const G1T& rhs) const {
+        return g1_cmp(n, rhs.n) == CMP_EQ;
+    }
 
-	bool operator!=(const G1T& rhs) const {
-		return g1_cmp(n, rhs.n) != CMP_EQ;
-	}
+    bool operator!=(const G1T& rhs) const {
+        return g1_cmp(n, rhs.n) != CMP_EQ;
+    }
 };
 
 /**
@@ -387,35 +408,35 @@ public:
  */
 class G2T {
 public:
-	g2_t n;
+    g2_t n;
 
 public:
-	G2T() {
-		g2_null(n);
-		g2_new(n);
-		// WARNING: G2T::Identity() assumes the default constructor sets this to infinity!
-		g2_set_infty(n);
-	}
+    G2T() {
+        g2_null(n);
+        g2_new(n);
+        // WARNING: G2T::Identity() assumes the default constructor sets this to infinity!
+        g2_set_infty(n);
+    }
 
-	G2T(const G2T& c) : G2T() {
-		// WARNING: RELIC asks for non-const, even though it does not modify the args. Thus, we remove the const using a cast.
-		g2_copy(n, const_cast<g2_t&>(c.n));
-	}
+    G2T(const G2T& c) : G2T() {
+        // WARNING: RELIC asks for non-const, even though it does not modify the args. Thus, we remove the const using a cast.
+        g2_copy(n, const_cast<g2_t&>(c.n));
+    }
 
-	G2T(const std::string& str) : G2T() {
-	    fromString(str);
-	}
+    G2T(const std::string& str) : G2T() {
+        fromString(str);
+    }
 
-	~G2T() {
-		g2_free(n);
-	}
+    ~G2T() {
+        g2_free(n);
+    }
 
 public:
-	int getByteCount() const {
-	    // FIXME: RELIC: g2_size_bin should take const g2_t
-	    return g2_size_bin(const_cast<g2_t&>(n), 1);
-	}
-	void toBytes(unsigned char * buf, int size) const;
+    int getByteCount() const {
+        // FIXME: RELIC: g2_size_bin should take const g2_t
+        return g2_size_bin(const_cast<g2_t&>(n), 1);
+    }
+    void toBytes(unsigned char * buf, int size) const;
     void fromBytes(const unsigned char * buf, int size);
 
     std::string toString() const;
@@ -478,19 +499,19 @@ public:
     }
 
 public:
-	// Implicitly cast G2T objects to g2_t types so that we can keep the same syntax when calling RELIC functions
-	operator g2_t& () { return n; }
-	operator const g2_t& () const { return n; }
+    // Implicitly cast G2T objects to g2_t types so that we can keep the same syntax when calling RELIC functions
+    operator g2_t& () { return n; }
+    operator const g2_t& () const { return n; }
 
-	bool operator==(const G2T& rhs) const {
-		// WARNING: RELIC asks for non-const, even though it does not modify the args. Thus, we remove the const using a cast.
-		return g2_cmp(const_cast<g2_t&>(n), const_cast<g2_t&>(rhs.n)) == CMP_EQ;
-	}
+    bool operator==(const G2T& rhs) const {
+        // WARNING: RELIC asks for non-const, even though it does not modify the args. Thus, we remove the const using a cast.
+        return g2_cmp(const_cast<g2_t&>(n), const_cast<g2_t&>(rhs.n)) == CMP_EQ;
+    }
 
-	bool operator!=(const G2T& rhs) const {
-		// WARNING: RELIC asks for non-const, even though it does not modify the args. Thus, we remove the const using a cast.
-		return g2_cmp(const_cast<g2_t&>(n), const_cast<g2_t&>(rhs.n)) != CMP_EQ;
-	}
+    bool operator!=(const G2T& rhs) const {
+        // WARNING: RELIC asks for non-const, even though it does not modify the args. Thus, we remove the const using a cast.
+        return g2_cmp(const_cast<g2_t&>(n), const_cast<g2_t&>(rhs.n)) != CMP_EQ;
+    }
 };
 
 /**
@@ -499,52 +520,52 @@ public:
  */
 class GTT {
 public:
-	gt_t n;
+    gt_t n;
 
 public:
-	GTT() {
-		gt_null(n);
-		gt_new(n);
-		// WARNING: Zero() relies on GTT()-created objects to be zero.
-		gt_zero(n);
-	}
+    GTT() {
+        gt_null(n);
+        gt_new(n);
+        // WARNING: Zero() relies on GTT()-created objects to be zero.
+        gt_zero(n);
+    }
 
-	GTT(const GTT& c) : GTT() {
-		// WARNING: RELIC asks for non-const, even though it does not modify the args. Thus, we remove the const using a cast.
-		gt_copy(n, const_cast<gt_t&>(c.n));
-	}
+    GTT(const GTT& c) : GTT() {
+        // WARNING: RELIC asks for non-const, even though it does not modify the args. Thus, we remove the const using a cast.
+        gt_copy(n, const_cast<gt_t&>(c.n));
+    }
 
-	~GTT() {
-		gt_free(n);
-	}
+    ~GTT() {
+        gt_free(n);
+    }
 
 public:
-	static const GTT& Zero();
+    static const GTT& Zero();
 
-	bool isZero() const {
-	    // FIXME: RELIC: fp12_cmp_dig takes non-const args
-	    return gt_cmp_dig(const_cast<gt_t&>(n), 0) == CMP_EQ;
-	}
+    bool isZero() const {
+        // FIXME: RELIC: fp12_cmp_dig takes non-const args
+        return gt_cmp_dig(const_cast<gt_t&>(n), 0) == CMP_EQ;
+    }
 
-	bool isUnity() const {
-	    // FIXME: RELIC: fp12_cmp_dig takes non-const args
+    bool isUnity() const {
+        // FIXME: RELIC: fp12_cmp_dig takes non-const args
         return gt_is_unity(const_cast<gt_t&>(n));
     }
 
 public:
-	// Implicitly cast GTT objects to gt_t types so that we can keep the same syntax when calling RELIC functions
-	operator gt_t& () { return n; }
-	operator const gt_t& () const { return n; }
+    // Implicitly cast GTT objects to gt_t types so that we can keep the same syntax when calling RELIC functions
+    operator gt_t& () { return n; }
+    operator const gt_t& () const { return n; }
 
-	bool operator==(const GTT& rhs) const {
-		// WARNING: RELIC asks for non-const, even though it does not modify the args. Thus, we remove the const using a cast.
-		return gt_cmp(const_cast<gt_t&>(n),  const_cast<gt_t&>(rhs.n)) == CMP_EQ;
-	}
+    bool operator==(const GTT& rhs) const {
+        // WARNING: RELIC asks for non-const, even though it does not modify the args. Thus, we remove the const using a cast.
+        return gt_cmp(const_cast<gt_t&>(n),  const_cast<gt_t&>(rhs.n)) == CMP_EQ;
+    }
 
-	bool operator!=(const GTT& rhs) const {
-		// WARNING: RELIC asks for non-const, even though it does not modify the args. Thus, we remove the const using a cast.
-		return gt_cmp(const_cast<gt_t&>(n),  const_cast<gt_t&>(rhs.n)) != CMP_EQ;
-	}
+    bool operator!=(const GTT& rhs) const {
+        // WARNING: RELIC asks for non-const, even though it does not modify the args. Thus, we remove the const using a cast.
+        return gt_cmp(const_cast<gt_t&>(n),  const_cast<gt_t&>(rhs.n)) != CMP_EQ;
+    }
 };
 
 /**
