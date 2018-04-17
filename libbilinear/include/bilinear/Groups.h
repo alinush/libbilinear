@@ -294,6 +294,44 @@ public:
     }
 };
 
+// NOTE: ALIN: FastModuloBarrett is not faster than SlowModulo on Linux!
+//#define WITH_FAST_MODULO
+
+/**
+ * Type for the 'p' in (n mod p).
+ */
+class BNModT {
+protected:
+#ifdef WITH_FAST_MODULO
+    // precomputed data for fast(er) modular reduction
+    BNT u;
+#endif
+    BNT modulus;
+
+public:
+    BNModT(const BNT& mod)
+        : modulus(mod)
+    {
+#ifdef WITH_FAST_MODULO
+        u = BNT::FastModuloPreBarrett(modulus);
+#endif
+    }
+
+public:
+    const BNT& getModulus() const { return modulus; }
+
+    /**
+     * Reduces the argument modulo the modulus.
+     */
+    void Reduce(BNT& num) const {
+#ifdef WITH_FAST_MODULO
+        num.FastModuloBarrett(modulus, u);
+#else
+        num.SlowModulo(modulus);
+#endif
+    }
+};
+
 /**
  * Wrapper around RELIC's g1_t.
  * (Note the similarity between all of these. Couldn't figure out a nice way to work around code duplication.)

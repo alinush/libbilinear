@@ -8,7 +8,6 @@
 
 #include "bilinear/Relic.h"
 #include "bilinear/Groups.h"
-#include "bilinear/PublicParameters.h"
 
 #include <map>
 #include <string>
