@@ -64,6 +64,10 @@ int main(int argc, char *argv[]) {
         args.push_back(std::string(argv[i]));
     }
 
+    unsigned int seed = static_cast<unsigned int>(time(NULL));
+    loginfo << "Randomness seed passed to srand(): " << seed << endl;
+    srand(seed);
+
     // Call application-defined AppMain()
     loginfo << endl;
     logdbg << "Launching AppMain() ..." << endl;
