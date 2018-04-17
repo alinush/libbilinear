@@ -6,7 +6,6 @@ add_library(bilinear
     Groups.cpp
     Library.cpp
     FastMultExp.cpp
-    PublicParameters.cpp
 )
 
 target_include_directories(bilinear PUBLIC

@@ -16,12 +16,18 @@
 
 namespace Bilinear {
 
-class LibraryInitializer {
+/**
+ * Initializes the RELIC cryptography library.
+ */
+class RelicInitializer {
 public:
-    LibraryInitializer();
-    ~LibraryInitializer();
+    RelicInitializer();
+    ~RelicInitializer();
 };
 
+/**
+ * Useful for getting group generators, group sizes, the size of group elements, etc.
+ */
 class Library {
 public:
     static Library* GetPtr() {
@@ -34,13 +40,19 @@ public:
         return *Library::GetPtr();
     }
 
-    ~Library();
+    ~Library() {}
 
 public:
-    static std::string getCurveName(int curveType);
-    static int getCurveByName(const char * curveName);
+    int getCurveByName(const char * curveName) const {
+        // NOTE: Will throw std::out_of_range if curve is not in
+        return curveNameToId.at(std::string(curveName));
+    }
 
-public:
+    std::string getCurveName(int curveType) const {
+        // NOTE: Will throw std::out_of_range if curve is not in
+        return curveIdToName.at(curveType);
+    }
+    
     int getCurrentCurve() const {
         return ep_param_get();
     }
@@ -61,8 +73,8 @@ public:
         return numBytesG2;
     }
 
-    const BNT& getG2Order() const {
-        return g2size;
+    const BNT& getGroupOrder() const {
+        return groupOrder;
     }
 
     /**
@@ -70,27 +82,30 @@ public:
      * If the group has order n, then it has elements g^0 through g^{n-1}. Thus,
      * the highest element we need to represent has order n-1 (not n!).
      */
-    int getG2OrderNumBits() const {
-        return g2bits;
+    int getGroupOrderNumBits() const {
+        return orderBits;
     }
+    
+    const std::string& getDescription() const { return description; }
 
-    PublicParameters getPublicParameters() const {
-        // TODO: Map each curve to its bit-security and return it here
-        return PublicParameters(128);
-    }
+    const G1T& getGen1() const { return gen1; }
+    const G2T& getGen2() const { return gen2; }
 
 private:
     Library();
 
 private:
-    LibraryInitializer li;
-    G1T dummyG1;
-    G2T dummyG2;
-    BNT g2size;
-    int g2bits;
-    int numBytesG1, numBytesG2;
-    std::map<int, std::string> curveIdToName;
-    std::map<std::string, int> curveNameToId;
+    RelicInitializer li;                        // initializes the RELIC cryptography library
+
+    std::string description;                    // a string describing how the library was compiled
+    std::map<int, std::string> curveIdToName;   // maps a curve ID to a name
+    std::map<std::string, int> curveNameToId;   // maps a name to a curve ID
+    
+    G1T gen1;                   // the generator of G1
+    G2T gen2;                   // the generator of G2
+    BNT groupOrder;             // the order of G1 and G2
+    int orderBits;              // the number of bits needed to represent the group's order
+    int numBytesG1, numBytesG2; // the number of bytes to store a G1 / G2 element
 };
 
 } /* namespace Bilinear */

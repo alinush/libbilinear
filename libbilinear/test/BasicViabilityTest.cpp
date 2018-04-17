@@ -20,6 +20,7 @@
 #include <xutils/Log.h>
 #include <xutils/Utils.h>
 #include <xutils/Timer.h>
+
 #include <bilinear/Library.h>
 #include <bilinear/FastMultExp.h>
 #include <bilinear/AppMain.h>
@@ -52,7 +53,7 @@ int BilinearAppMain(const Library& lib, const std::vector<std::string>& args) {
     srand(seed);
     loginfo << endl;
 
-    BNT fieldOrder = Library::Get().getPublicParameters().getGroupOrder();
+    BNT fieldOrder = lib.getGroupOrder();
 
     int numIters = 100;
     logdbg << "Testing fast modular reduction..." << endl;
@@ -158,7 +159,7 @@ void testFastMultExp() {
     int n = 10 + (rand() % 2);
     int k = 5;
     // For fast multiple exponentiation, we need to know the max number of bits in an exponent
-    int maxBits = Library::Get().getG2OrderNumBits();
+    int maxBits = Library::Get().getGroupOrderNumBits();
     //int maxBits = 256;
     //logdbg << "Max bits: " << maxBits << endl;
 
@@ -172,7 +173,7 @@ void testFastMultExp() {
 
     for(size_t i : s) {
         a[i].Random();
-        e[i].RandomMod(Library::Get().getG2Order());
+        e[i].RandomMod(Library::Get().getGroupOrder());
     }
 
     assertEqual(r1, GT::Identity());

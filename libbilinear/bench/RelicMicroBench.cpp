@@ -5,11 +5,10 @@
 #include <vector>
 #include <cstring>
 
-#include "bilinear/PublicParameters.h"
+#include <xutils/Utils.h>
+#include <xutils/Timer.h>
+#include <xutils/Log.h>
 
-#include "xutils/Utils.h"
-#include "xutils/Timer.h"
-#include "xutils/Log.h"
 #include "bilinear/AppMain.h"
 
 
@@ -129,8 +128,7 @@ int BilinearAppMain(const Library& lib, const std::vector<std::string>& args) {
     const int smallNumIters = 1;
 #endif
 
-    PublicParameters params = lib.getPublicParameters();
-    BNT fieldOrder = params.getGroupOrder();
+    BNT fieldOrder = lib.getGroupOrder();
 
     benchPairing(fieldOrder, 100);
     benchChaPedSign(fieldOrder, 100);

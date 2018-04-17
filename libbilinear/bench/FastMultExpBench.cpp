@@ -16,10 +16,10 @@
 #include <memory>
 #include <stdexcept>
 
-#include "xutils/Log.h"
-#include "xutils/Utils.h"
-#include "xutils/Timer.h"
-#include "xassert/XAssert.h"
+#include <xutils/Log.h>
+#include <xutils/Utils.h>
+#include <xutils/Timer.h>
+#include <xassert/XAssert.h>
 
 using namespace std;
 
@@ -41,12 +41,12 @@ int BilinearAppMain(const Library& lib, const std::vector<std::string>& args) {
     srand(seed);
 
     loginfo << "Benchmarking fast exponentiated multiplication in G1..." << endl;
-    benchFastMultExp<G1T>(50, 1500, 1000);
+    benchFastMultExp<G1T>(10, 1000, 501);
 
     loginfo << endl;
 
     loginfo << "Benchmarking fast exponentiated multiplication in G2..." << endl;
-    benchFastMultExp<G2T>(50, 1500, 1000);
+    benchFastMultExp<G2T>(10, 1000, 501);
 
     return 0;
 }
@@ -57,14 +57,15 @@ void benchFastMultExp(int numIters, int numSigners, int reqSigners) {
     int n = numSigners + (rand() % 2);
     int k = reqSigners + (rand() % 2);
     assertLessThanOrEqual(reqSigners, numSigners);
-    int maxBits = Library::Get().getG2OrderNumBits();
+    int maxBits = Library::Get().getGroupOrderNumBits();
     //int maxBits = 256;
     logdbg << "Max bits: " << maxBits << endl;
 
+    // Pick a random subset of k signers out of n
     std::vector<size_t> s;
     Utils::randomSubset(s, n, k);
 
-
+    // Store random group elements in a[] and their exponents in e[]
     std::vector<GT> a;
     std::vector<BNT> e;
     a.resize(static_cast<size_t>(n) + 1);
@@ -72,14 +73,14 @@ void benchFastMultExp(int numIters, int numSigners, int reqSigners) {
 
     for(size_t i : s) {
         a[i].Random();
-        e[i].RandomMod(Library::Get().getG2Order());
+        e[i].RandomMod(Library::Get().getGroupOrder());
     }
 
     assertEqual(r1, GT::Identity());
     assertEqual(r2, GT::Identity());
 
     // Slow way
-    AveragingTimer t1("Naive way:      ");
+    AveragingTimer t1("Naive way (" + std::to_string(k) + " exponentiations):      ");
     for(int i = 0; i < numIters; i++) {
         t1.startLap();
         r2 = GT::Identity();
@@ -95,7 +96,7 @@ void benchFastMultExp(int numIters, int numSigners, int reqSigners) {
     }
 
     // Fast way
-    AveragingTimer t2("fastMultExp:    ");
+    AveragingTimer t2("fastMultExp (" + std::to_string(k) + " exponentiations):    ");
     for(int i = 0; i < numIters; i++) {
         t2.startLap();
         r1 = fastMultExp<GT>(s, a, e, maxBits);
