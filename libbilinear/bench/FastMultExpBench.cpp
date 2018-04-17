@@ -25,7 +25,7 @@ using namespace std;
 
 #include "bilinear/Library.h"
 #include "bilinear/FastMultExp.h"
-#include "bilinear/internal/Main.h"
+#include "bilinear/AppMain.h"
 
 using namespace Bilinear;
 
@@ -40,13 +40,13 @@ int BilinearAppMain(const Library& lib, const std::vector<std::string>& args) {
     loginfo << "Randomness seed passed to srand(): " << seed << endl;
     srand(seed);
 
-    logdbg << "Benchmarking fast exponentiated multiplication in G1..." << endl;
-    benchFastMultExp<G1T>(100, 1500, 1000);
+    loginfo << "Benchmarking fast exponentiated multiplication in G1..." << endl;
+    benchFastMultExp<G1T>(50, 1500, 1000);
 
     loginfo << endl;
 
-    logdbg << "Benchmarking fast exponentiated multiplication in G2..." << endl;
-    benchFastMultExp<G2T>(100, 1500, 1000);
+    loginfo << "Benchmarking fast exponentiated multiplication in G2..." << endl;
+    benchFastMultExp<G2T>(50, 1500, 1000);
 
     return 0;
 }

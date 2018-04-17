@@ -5,7 +5,7 @@
  */
 #include "bilinear/Configuration.h"
 
-#include "bilinear/internal/Main.h"
+#include "bilinear/AppMain.h"
 
 #include "xassert/XAssert.h"
 #include "xutils/Log.h"

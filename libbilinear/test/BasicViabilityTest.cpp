@@ -22,7 +22,7 @@
 #include <xutils/Timer.h>
 #include <bilinear/Library.h>
 #include <bilinear/FastMultExp.h>
-#include <bilinear/internal/Main.h>
+#include <bilinear/AppMain.h>
 
 using namespace std;
 using namespace Bilinear;

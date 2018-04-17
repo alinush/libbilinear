@@ -10,7 +10,7 @@
 #include "xutils/Utils.h"
 #include "xutils/Timer.h"
 #include "xutils/Log.h"
-#include "bilinear/internal/Main.h"
+#include "bilinear/AppMain.h"
 
 
 using namespace Bilinear;

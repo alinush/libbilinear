@@ -7,7 +7,7 @@
 #include "xutils/Log.h"
 #include "xassert/XAssert.h"
 
-#include "bilinear/internal/Main.h"
+#include "bilinear/AppMain.h"
 
 using namespace Bilinear;
 using std::endl;

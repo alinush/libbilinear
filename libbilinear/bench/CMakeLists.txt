@@ -8,7 +8,7 @@ foreach(appSrc ${bilinear_bench_sources})
     set(appDir ../bin/bench)
 
     add_executable(${appName} ${appSrc})
-    target_link_libraries(${appName} PRIVATE mainapp bilinear)
+    target_link_libraries(${appName} PRIVATE bilinear_mainapp bilinear)
 
     set_target_properties(${appName} PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${appDir})
 endforeach()
