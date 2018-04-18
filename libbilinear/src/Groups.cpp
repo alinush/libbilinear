@@ -281,6 +281,10 @@ std::ostream& operator<<(std::ostream& o, const BNT& num) {
     o << num.toString();
     return o;
 }
+std::ostream& operator<<(std::ostream& o, const BNModT& num) {
+    o << num.getModulus();
+    return o;
+}
 
 std::ostream& operator<<(std::ostream& o, const G1T& num) {
     // Print as hexadecimal string

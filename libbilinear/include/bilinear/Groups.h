@@ -610,6 +610,7 @@ public:
  * Easily print RELIC types using std::ostream objects like std::cout
  */
 std::ostream& operator<<(std::ostream& o, const BNT& num);
+std::ostream& operator<<(std::ostream& o, const BNModT& num);
 std::ostream& operator<<(std::ostream& o, const G1T& num);
 std::ostream& operator<<(std::ostream& o, const G2T& num);
 std::ostream& operator<<(std::ostream& o, const GTT& num);
