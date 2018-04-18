@@ -30,29 +30,69 @@ using namespace std;
 using namespace Bilinear;
 
 template<class GT>
-void benchFastMultExp(int numIters, int numSigners, int reqSigners);
+void benchFastMultExp(int numIters, int numSigners, int reqSigners, bool skipNaive = false);
+
+#define FAST_MULT_COMPARE 1
+#define FAST_MULT_LARGE 2
 
 int BilinearAppMain(const Library& lib, const std::vector<std::string>& args) {
     (void)lib;
     (void)args;
 
-    unsigned int seed = static_cast<unsigned int>(time(NULL));
-    loginfo << "Randomness seed passed to srand(): " << seed << endl;
-    srand(seed);
+    int type = FAST_MULT_COMPARE;
 
-    loginfo << "Benchmarking fast exponentiated multiplication in G1..." << endl;
-    benchFastMultExp<G1T>(10, 1000, 501);
+    if(args.size() > 1) {
+        if(args[1] == "-h" || args[1] == "--help") {
+            cout << endl;
+            cout << "Usage: " << args[0] << "<benchmark-type>" << endl;
+            cout << endl;
+            cout << "<benchmark-type> can be:" << endl;
+            cout << "   comparison  -- compares naive multiple exponentiation with fast method (default)" << endl;
+            cout << "   large       -- runs a large benchmark for fast multiple exponentiation" << endl;
+            cout << endl;
+            return 1;
+        }
 
-    loginfo << endl;
+        if(args[1] == "comparison") {
+            type = FAST_MULT_COMPARE;
+        } else if (args[1] == "large") {
+            type = FAST_MULT_LARGE;
+        }
+    } 
 
-    loginfo << "Benchmarking fast exponentiated multiplication in G2..." << endl;
-    benchFastMultExp<G2T>(10, 1000, 501);
+    //srand(seed);
+
+    switch(type) {
+        case FAST_MULT_COMPARE:
+        {
+            loginfo << "Benchmarking fast exponentiated multiplication in G1..." << endl;
+            benchFastMultExp<G1T>(10, 1000, 501);
+
+            loginfo << endl;
+
+            loginfo << "Benchmarking fast exponentiated multiplication in G2..." << endl;
+            benchFastMultExp<G2T>(10, 1000, 501);
+            break;
+        }
+        case FAST_MULT_LARGE:
+        {
+            int n = 2*1000*1000 + 1;
+            int k = 1000*1000;
+            //int n = 2*1000 + 1;
+            //int k = 1000;
+            loginfo << "Benchmarking " << k << " fast multiple exponentiations in G1..." << endl;
+            benchFastMultExp<G1T>(1, n, k, true);
+            break;
+        }
+        default:
+            throw std::logic_error("You did not correctly implement the default benchmarking path");
+    }
 
     return 0;
 }
 
 template<class GT>
-void benchFastMultExp(int numIters, int numSigners, int reqSigners) {
+void benchFastMultExp(int numIters, int numSigners, int reqSigners, bool skipNaive) {
     GT r1, r2;
     int n = numSigners + (rand() % 2);
     int k = reqSigners + (rand() % 2);
@@ -81,18 +121,20 @@ void benchFastMultExp(int numIters, int numSigners, int reqSigners) {
 
     // Slow way
     AveragingTimer t1("Naive way (" + std::to_string(k) + " exponentiations):      ");
-    for(int i = 0; i < numIters; i++) {
-        t1.startLap();
-        r2 = GT::Identity();
-        for(size_t i : s) {
+    if(skipNaive == false) {
+        for(int i = 0; i < numIters; i++) {
+            t1.startLap();
+            r2 = GT::Identity();
+            for(size_t i : s) {
 
-            GT& base = a[i];
-            BNT& exp = e[i];
+                GT& base = a[i];
+                BNT& exp = e[i];
 
-            GT pow = GT::Times(base, exp);
-            r2.Add(pow);
+                GT pow = GT::Times(base, exp);
+                r2.Add(pow);
+            }
+            t1.endLap();
         }
-        t1.endLap();
     }
 
     // Fast way
@@ -104,12 +146,15 @@ void benchFastMultExp(int numIters, int numSigners, int reqSigners) {
     }
 
     loginfo << "Ran for " << numIters << " iterations" << endl;
-    loginfo << t1 << endl;
+    if(skipNaive == false)
+        loginfo << t1 << endl;
     loginfo << t2 << endl;
 
-    // Same way?
-    if(r1 != r2) {
-        throw std::runtime_error("Incorrect results returned by one of the implementations.");
+    if(skipNaive == false) {
+        // Same way?
+        if(r1 != r2) {
+            throw std::runtime_error("Incorrect results returned by one of the implementations.");
+        }   
     }
 }
 

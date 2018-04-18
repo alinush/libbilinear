@@ -121,8 +121,8 @@ int BilinearAppMain(const Library& lib, const std::vector<std::string>& args) {
     srand(seed);
 
 #ifdef NDEBUG
-    const int bigNumIters   = 10000;
-    const int smallNumIters = 1000;
+    const int bigNumIters   = 1000;
+    const int smallNumIters = 500;
 #else
     const int bigNumIters = 10;
     const int smallNumIters = 1;
