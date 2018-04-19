@@ -387,8 +387,11 @@ public:
         return *this;
     }
 
-    G1T& Times(const BNT& b) {
-        g1_mul(n, n, b);
+    /**
+     *  @param  e   exponent (field element), can be negative
+     */
+    G1T& Times(const BNT& e) {
+        g1_mul(n, n, e);
         return *this;
     }
 
@@ -409,6 +412,10 @@ public:
         return r;
     }
 
+    /**
+     *  @param  a   base (group element)
+     *  @param  e   exponent (field element), can be negative
+     */
     static G1T Times(const G1T& a, const BNT& e) {
         G1T r;
         g1_mul(r, a, e);
