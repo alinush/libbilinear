@@ -229,8 +229,8 @@ int BilinearAppMain(const Library& lib, const std::vector<std::string>& args) {
 void benchPrecompute(const BNT& fieldOrder, int numIters) {
     AveragingTimer g1pre("G1T::Precompute");
     AveragingTimer g2pre("G2T::Precompute");
-    AveragingTimer g1mul("G1T::PrecomputeAndMult");
-    AveragingTimer g2mul("G2T::PrecomputeAndMult");
+    AveragingTimer g1mul("G1T::MultWithPrecompute");
+    AveragingTimer g2mul("G2T::MultWithPrecompute");
     // Precompute on message hash h (we have to include it in the timings)
     for(int i = 0; i < numIters; i++) {
         g1_t ht[RELIC_G1_TABLE];
