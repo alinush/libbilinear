@@ -139,6 +139,7 @@ int BilinearAppMain(const Library& lib, const std::vector<std::string>& args) {
 //    AveragingTimer tDiv("BNT::DivideBy"); // Don't use this (except rarely in old Lagrange coefficient implementation)
     AveragingTimer tTimes("BNT::Times");
     AveragingTimer g1exp("G1T::Times");
+    AveragingTimer g1add("G1T::Add");
     AveragingTimer g2exp("G2T::Times");
 
     for(int i = 0; i < bigNumIters; i++) {
@@ -160,11 +161,16 @@ int BilinearAppMain(const Library& lib, const std::vector<std::string>& args) {
         a.RandomMod(fieldOrder);
         b.RandomMod(fieldOrder);
 
-        G1T p;
+        G1T p, q;
         p.Random();
+        q.Random();
         g1exp.startLap();
         p.Times(a);
         g1exp.endLap();
+
+        g1add.startLap();
+        p.Add(q);
+        g1add.endLap();
 
         // TODO: benchmark g1_gen_mul and g2_gen_mul
 
@@ -180,6 +186,7 @@ int BilinearAppMain(const Library& lib, const std::vector<std::string>& args) {
 
     logperf << endl;
 
+    printTime(g1add, true);
     printTime(g1exp, true);
     printTime(g2exp, true);
 
