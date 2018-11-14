@@ -17,8 +17,10 @@ using std::endl;
 
 void printTime(const AveragingTimer& t, bool printAvg = false) {
     logperf << t.numIterations() << " iters of " << t.getName() << ": " << t.totalLapTime() << " microsecs" << std::endl;
-    if(printAvg)
-        logperf << " * Average: " << t.averageLapTime() << " micros" << endl;
+    if(printAvg) {
+        logperf << " * Average: " << t.averageLapTime() << " microsecs" << endl;
+        logperf << " * Stddev:  " << t.stddev() << " microsecs" << endl;
+    }
 }
 
 typedef BNT& (BNT::*ModFunc)(const BNT& , const BNT& );
@@ -91,7 +93,7 @@ void benchChaPedSign(const BNT& fieldOrder, int numIters);
  */
 void benchPrecompute(const BNT& fieldOrder, int numIters);
 
-void benchModulo(const BNT& fieldOrder, int bigNumIters) {
+void benchModulo(const BNT& fieldOrder, int numIters) {
 
     AveragingTimer tSlowMod("BNT::SlowModulo");
     // NOTE: BNT::FastModulo by default uses Monty so we don't need to benchmark it separately
@@ -100,12 +102,12 @@ void benchModulo(const BNT& fieldOrder, int bigNumIters) {
     AveragingTimer tFastModPmers("BNT::FastModuloPmers");
 
     // Just benchmarks BNT::SlowModulo
-    benchmarkModulo(fieldOrder, bigNumIters, tSlowMod, nullptr, nullptr);
-    benchmarkModulo(fieldOrder, bigNumIters, tFastModMonty, BNT::FastModuloPreMonty, &BNT::FastModuloMonty);
-    benchmarkModulo(fieldOrder, bigNumIters, tFastModBarrt, BNT::FastModuloPreBarrett, &BNT::FastModuloBarrett);
+    benchmarkModulo(fieldOrder, numIters, tSlowMod, nullptr, nullptr);
+    benchmarkModulo(fieldOrder, numIters, tFastModMonty, BNT::FastModuloPreMonty, &BNT::FastModuloMonty);
+    benchmarkModulo(fieldOrder, numIters, tFastModBarrt, BNT::FastModuloPreBarrett, &BNT::FastModuloBarrett);
     // Pmers is too slow, so we don't want to waste time.
-    if(bigNumIters < 100 * 1000 + 1)
-        benchmarkModulo(fieldOrder, bigNumIters, tFastModPmers, BNT::FastModuloPrePmers, &BNT::FastModuloPmers);
+    if(numIters < 100 * 1000 + 1)
+        benchmarkModulo(fieldOrder, numIters, tFastModPmers, BNT::FastModuloPrePmers, &BNT::FastModuloPmers);
     else
         loginfo << "Not running PMERS modular reduction benchmarks cause they're too slow" << endl;
 }
@@ -121,18 +123,20 @@ int BilinearAppMain(const Library& lib, const std::vector<std::string>& args) {
     srand(seed);
 
 #ifdef NDEBUG
-    const int bigNumIters   = 1000;
+    const int pairingIters  = 10000;
+    const int bigNumIters   = 10000;
     const int smallNumIters = 500;
 #else
+    const int pairingIters  = 100;
     const int bigNumIters = 10;
     const int smallNumIters = 1;
 #endif
 
     BNT fieldOrder = lib.getGroupOrder();
 
-    benchPairing(fieldOrder, 100);
-    benchChaPedSign(fieldOrder, 100);
-    benchChaPedVerify(fieldOrder, 100);
+    benchPairing(fieldOrder, pairingIters);
+    benchChaPedSign(fieldOrder, pairingIters);
+    benchChaPedVerify(fieldOrder, pairingIters);
 
     loginfo << endl;
 
