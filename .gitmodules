@@ -1,6 +1,6 @@
 [submodule "depends/xassert"]
-	path = depends/xassert
-	url = https://github.com/alinush/xassert
+    path = depends/xassert
+    url = https://github.com/alinush/xassert
 [submodule "depends/libxutils"]
-	path = depends/libxutils
-	url = https://github.com/alinush/libxutils
+    path = depends/libxutils
+    url = https://github.com/alinush/libxutils
