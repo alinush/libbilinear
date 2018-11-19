@@ -52,6 +52,8 @@ int BilinearAppMain(const Library& lib, const std::vector<std::string>& args) {
         cout << endl;
         cout << "<num-exps> is the number of exponentiations that will be benchmarked" << endl;
         cout << endl;
+        cout << "<num-iters> is the number of times a multi exponentiation will be measured" << endl;
+        cout << endl;
         return 1;
     }
 
