@@ -30,7 +30,7 @@ using namespace std;
 using namespace Bilinear;
 
 template<class GT>
-void benchFastMultExp(int numIters, int numSigners, int reqSigners, bool skipNaive = false);
+void benchFastMultExp(int numIters, int n, bool skipNaive = false);
 
 #define FAST_MULT_COMPARE 1
 #define FAST_MULT_LARGE 2
@@ -40,48 +40,56 @@ int BilinearAppMain(const Library& lib, const std::vector<std::string>& args) {
     (void)args;
 
     int type = FAST_MULT_COMPARE;
+    int n = 512;
 
     if(args.size() > 1) {
         if(args[1] == "-h" || args[1] == "--help") {
             cout << endl;
-            cout << "Usage: " << args[0] << "<benchmark-type>" << endl;
+            cout << "Usage: " << args[0] << "<benchmark-type> [<num-exps>]" << endl;
             cout << endl;
             cout << "<benchmark-type> can be:" << endl;
-            cout << "   comparison  -- compares naive multiple exponentiation with fast method (default)" << endl;
-            cout << "   large       -- runs a large benchmark for fast multiple exponentiation" << endl;
+            cout << "   comparison  -- compares fast batch exponentiation method with naive one (default benchmark)" << endl;
+            cout << "   large       -- just runs the fast batch exponentiation method" << endl;
+            cout << endl;
+            cout << "<num-exps> is the number of exponentiations that will be benchmarked" << endl;
             cout << endl;
             return 1;
         }
 
         if(args[1] == "comparison") {
-            type = FAST_MULT_COMPARE;
+            // already set default values above
         } else if (args[1] == "large") {
             type = FAST_MULT_LARGE;
+            n = 1024*1024;
+        } else {
+            cout << "ERROR: Method must be either 'comparison' or 'large'" << endl;
+            return 1;
         }
-    } 
+
+        if(args.size() > 2) {
+            n = std::stoi(args[2]);
+        }
+    }
 
     //srand(seed);
 
     switch(type) {
         case FAST_MULT_COMPARE:
         {
-            loginfo << "Benchmarking fast exponentiated multiplication in G1..." << endl;
-            benchFastMultExp<G1T>(10, 1000, 501);
-
+            loginfo << "Benchmarking " << n << " exponentiations in G1 (fast batch + naive)..." << endl;
+            benchFastMultExp<G1T>(10, n);
             loginfo << endl;
-
-            loginfo << "Benchmarking fast exponentiated multiplication in G2..." << endl;
-            benchFastMultExp<G2T>(10, 1000, 501);
+            loginfo << "Benchmarking " << n << " exponentiations in G2 (fast batch + naive)..." << endl;
+            benchFastMultExp<G2T>(10, n);
             break;
         }
         case FAST_MULT_LARGE:
         {
-            int n = 2*1000*1000 + 1;
-            int k = 1000*1000;
-            //int n = 2*1000 + 1;
-            //int k = 1000;
-            loginfo << "Benchmarking " << k << " fast multiple exponentiations in G1..." << endl;
-            benchFastMultExp<G1T>(1, n, k, true);
+            loginfo << "Benchmarking " << n << " exponentiations in G1 (fast batch only)..." << endl;
+            benchFastMultExp<G1T>(1, n, true);
+            loginfo << endl;
+            loginfo << "Benchmarking " << n << " exponentiations in G2 (fast batch only)..." << endl;
+            benchFastMultExp<G2T>(1, n, true);
             break;
         }
         default:
@@ -92,18 +100,10 @@ int BilinearAppMain(const Library& lib, const std::vector<std::string>& args) {
 }
 
 template<class GT>
-void benchFastMultExp(int numIters, int numSigners, int reqSigners, bool skipNaive) {
+void benchFastMultExp(int numIters, int n, bool skipNaive) {
     GT r1, r2;
-    int n = numSigners + (rand() % 2);
-    int k = reqSigners + (rand() % 2);
-    assertLessThanOrEqual(reqSigners, numSigners);
     int maxBits = Library::Get().getGroupOrderNumBits();
-    //int maxBits = 256;
     logdbg << "Max bits: " << maxBits << endl;
-
-    // Pick a random subset of k signers out of n
-    std::vector<size_t> s;
-    Utils::randomSubset(s, n, k);
 
     // Store random group elements in a[] and their exponents in e[]
     std::vector<GT> a;
@@ -111,7 +111,7 @@ void benchFastMultExp(int numIters, int numSigners, int reqSigners, bool skipNai
     a.resize(static_cast<size_t>(n) + 1);
     e.resize(static_cast<size_t>(n) + 1);
 
-    for(size_t i : s) {
+    for(size_t i = 0; i < a.size(); i++) {
         a[i].Random();
         e[i].RandomMod(Library::Get().getGroupOrder());
     }
@@ -120,12 +120,12 @@ void benchFastMultExp(int numIters, int numSigners, int reqSigners, bool skipNai
     assertEqual(r2, GT::Identity());
 
     // Slow way
-    AveragingTimer t1("Naive way (" + std::to_string(k) + " exponentiations):      ");
+    AveragingTimer t1("naiveExp:    ");
     if(skipNaive == false) {
         for(int i = 0; i < numIters; i++) {
             t1.startLap();
             r2 = GT::Identity();
-            for(size_t i : s) {
+            for(size_t i = 0; i < a.size(); i++) {
 
                 GT& base = a[i];
                 BNT& exp = e[i];
@@ -138,17 +138,19 @@ void benchFastMultExp(int numIters, int numSigners, int reqSigners, bool skipNai
     }
 
     // Fast way
-    AveragingTimer t2("fastMultExp (" + std::to_string(k) + " exponentiations):    ");
+    AveragingTimer t2("fastMultExp: ");
     for(int i = 0; i < numIters; i++) {
         t2.startLap();
-        r1 = fastMultExp<GT>(s, a, e, maxBits);
+        r1 = fastMultExp<GT>(a, e, maxBits);
         t2.endLap();
     }
 
-    loginfo << "Ran for " << numIters << " iterations" << endl;
-    if(skipNaive == false)
+    if(skipNaive == false) {
         loginfo << t1 << endl;
+        loginfo << " * Average per exponentiation: " << t1.averageLapTime() / n << endl;
+    }
     loginfo << t2 << endl;
+    loginfo << " * Average per exponentiation: " << t2.averageLapTime() / n << endl;
 
     if(skipNaive == false) {
         // Same way?

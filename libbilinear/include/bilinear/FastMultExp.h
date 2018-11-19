@@ -21,3 +21,8 @@ template<class GT>
 GT fastMultExp(
     const std::vector<size_t>& S, const std::vector<GT>& a, 
     const std::vector<BNT>& e, int maxBits);
+
+template<class GT>
+GT fastMultExp(
+    const std::vector<GT>& a, 
+    const std::vector<BNT>& e, int maxBits);
