@@ -40,36 +40,34 @@ int BilinearAppMain(const Library& lib, const std::vector<std::string>& args) {
     (void)args;
 
     int type = FAST_MULT_COMPARE;
-    int n = 512;
+    int n = 512, numIters;
 
-    if(args.size() > 1) {
-        if(args[1] == "-h" || args[1] == "--help") {
-            cout << endl;
-            cout << "Usage: " << args[0] << "<benchmark-type> [<num-exps>]" << endl;
-            cout << endl;
-            cout << "<benchmark-type> can be:" << endl;
-            cout << "   comparison  -- compares fast batch exponentiation method with naive one (default benchmark)" << endl;
-            cout << "   large       -- just runs the fast batch exponentiation method" << endl;
-            cout << endl;
-            cout << "<num-exps> is the number of exponentiations that will be benchmarked" << endl;
-            cout << endl;
-            return 1;
-        }
-
-        if(args[1] == "comparison") {
-            // already set default values above
-        } else if (args[1] == "large") {
-            type = FAST_MULT_LARGE;
-            n = 1024*1024;
-        } else {
-            cout << "ERROR: Method must be either 'comparison' or 'large'" << endl;
-            return 1;
-        }
-
-        if(args.size() > 2) {
-            n = std::stoi(args[2]);
-        }
+    if((args.size() > 1 && (args[1] == "-h" || args[1] == "--help")) || args.size() < 4) {
+        cout << endl;
+        cout << "Usage: " << args[0] << "<benchmark-type> <num-exps> <num-iters>" << endl;
+        cout << endl;
+        cout << "<benchmark-type> can be:" << endl;
+        cout << "   comparison  -- compares fast batch exponentiation method with naive one (default benchmark)" << endl;
+        cout << "   large       -- just runs the fast batch exponentiation method" << endl;
+        cout << endl;
+        cout << "<num-exps> is the number of exponentiations that will be benchmarked" << endl;
+        cout << endl;
+        return 1;
     }
+
+    if(args[1] == "comparison") {
+        // already set default values above
+    } else if (args[1] == "large") {
+        type = FAST_MULT_LARGE;
+        n = 1024*1024;
+    } else {
+        cout << "ERROR: Method must be either 'comparison' or 'large'" << endl;
+        return 1;
+    }
+
+    n = std::stoi(args[2]);
+
+    numIters = std::stoi(args[3]);
 
     //srand(seed);
 
@@ -77,19 +75,21 @@ int BilinearAppMain(const Library& lib, const std::vector<std::string>& args) {
         case FAST_MULT_COMPARE:
         {
             loginfo << "Benchmarking " << n << " exponentiations in G1 (fast batch + naive)..." << endl;
-            benchFastMultExp<G1T>(10, n);
+            benchFastMultExp<G1T>(numIters, n);
             loginfo << endl;
+            
             loginfo << "Benchmarking " << n << " exponentiations in G2 (fast batch + naive)..." << endl;
-            benchFastMultExp<G2T>(10, n);
+            benchFastMultExp<G2T>(numIters, n);
             break;
         }
         case FAST_MULT_LARGE:
         {
             loginfo << "Benchmarking " << n << " exponentiations in G1 (fast batch only)..." << endl;
-            benchFastMultExp<G1T>(1, n, true);
+            benchFastMultExp<G1T>(numIters, n, true);
             loginfo << endl;
+
             loginfo << "Benchmarking " << n << " exponentiations in G2 (fast batch only)..." << endl;
-            benchFastMultExp<G2T>(1, n, true);
+            benchFastMultExp<G2T>(numIters, n, true);
             break;
         }
         default:
