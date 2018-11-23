@@ -123,6 +123,7 @@ To test:
 
 ## TODOs
 
+ - Pimpl pattern to avoid RELIC's #define conflicts
  - [DONE] Cannot `sudo make install` because it fails when installing `libxutils`
     + Due to misconfigured `target_include_directories` in `libxutils` and `libxassert`
  - [DONE] Need to figure out build system to properly link dependencies
