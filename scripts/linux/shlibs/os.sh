@@ -1,10 +1,12 @@
 OS_FLAVOR="Unknown"
+NUM_CPUS=
 
 if [ "$(uname -s)" = "Darwin" ]; then
     OS="OSX"
+    NUM_CPUS=`sysctl -n hw.ncpu`
 elif [ "$(uname -s)" = "Linux" ]; then
     OS="Linux"
-
+    NUM_CPUS=`grep -c ^processor /proc/cpuinfo`
     if [ -f /etc/issue ]; then
         if grep Fedora /etc/issue >/dev/null; then
             OS_FLAVOR="Fedora"
