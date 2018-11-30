@@ -44,15 +44,14 @@ int BilinearAppMain(const Library& lib, const std::vector<std::string>& args) {
 
     if((args.size() > 1 && (args[1] == "-h" || args[1] == "--help")) || args.size() < 4) {
         cout << endl;
-        cout << "Usage: " << args[0] << "<benchmark-type> <num-exps> <num-iters>" << endl;
+        cout << "Usage: " << args[0] << " <benchmark-type> <num-exps> <num-iters>" << endl;
         cout << endl;
-        cout << "<benchmark-type> can be:" << endl;
-        cout << "   comparison  -- compares fast batch exponentiation method with naive one (default benchmark)" << endl;
-        cout << "   large       -- just runs the fast batch exponentiation method" << endl;
-        cout << endl;
-        cout << "<num-exps> is the number of exponentiations that will be benchmarked" << endl;
-        cout << endl;
-        cout << "<num-iters> is the number of times a multi exponentiation will be measured" << endl;
+        cout << "OPTIONS: " << endl;
+        cout << "   <benchmark-type> can be:" << endl;
+        cout << "     comparison  -- compares fast batch exponentiation method with naive one (default benchmark)" << endl;
+        cout << "     large       -- just runs the fast batch exponentiation method" << endl;
+        cout << "   <num-exps> is the number of exponentiations that will be benchmarked" << endl;
+        cout << "   <num-iters> is the number of times a multi exponentiation will be measured" << endl;
         cout << endl;
         return 1;
     }
